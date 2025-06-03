@@ -1,0 +1,1661 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ইংরেজি লেভেল A2 কুইজ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" onload="document.documentElement.classList.add('fonts-loaded')" onerror="document.documentElement.classList.add('fonts-failed')">
+  <style>
+    /* Fallback styles if fonts fail to load */
+    html.fonts-failed body {
+      font-family: sans-serif;
+    }
+
+    /* Ensure box-sizing consistency */
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Roboto", "Noto Sans Bengali", sans-serif;
+      background-color: #F5F5F5;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.5;
+      color: #333333;
+    }
+
+    .progress-container {
+      padding: 8px 16px;
+      background-color: #FFFFFF;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #E0E0E0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 8px;
+      background-color: #388e3c;
+      width: 0%;
+      -webkit-transition: width 0.3s ease-in-out;
+      transition: width 0.3s ease-in-out;
+    }
+
+    .score-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      padding: 8px 16px;
+      background-color: #FFFFFF;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .score-container .reset-button,
+    .score-container .select-level-button {
+      background-color: #D62828;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      cursor: pointer;
+      -webkit-transition: background-color 0.3s, -webkit-transform 0.3s;
+      transition: background-color 0.3s, transform 0.3s;
+      position: relative;
+      overflow: hidden;
+      min-height: 36px;
+      height: auto;
+    }
+
+    .score-container .select-level-button {
+      background-color: #0288D1;
+      margin-right: 8px;
+    }
+
+    .score-container .reset-button:hover,
+    .score-container .select-level-button:hover {
+      background-color: #B71C1C;
+    }
+
+    .score-container .select-level-button:hover {
+      background-color: #0277BD;
+    }
+
+    .score-container .reset-button:active,
+    .score-container .select-level-button:active {
+      -webkit-transform: scale(0.95);
+      transform: scale(0.95);
+    }
+
+    .game-container {
+      background: #FFFFFF;
+      margin: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0 0 16px 0;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+
+    button {
+      background-color: #E38B18;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 500;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      cursor: pointer;
+      -webkit-transition: background-color 0.3s, -webkit-transform 0.1s;
+      transition: background-color 0.3s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+      min-height: 48px;
+      height: auto;
+      margin: 4px;
+    }
+
+    button:hover {
+      background-color: #D17A15;
+    }
+
+    button:active {
+      -webkit-transform: scale(0.95);
+      transform: scale(0.95);
+    }
+
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      -webkit-transform: scale(0);
+      transform: scale(0);
+      opacity: 1;
+      pointer-events: none;
+      -webkit-animation: ripple 0.6s linear;
+      animation: ripple 0.6s linear;
+    }
+
+    @-webkit-keyframes ripple {
+      to {
+        -webkit-transform: scale(4);
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes ripple {
+      to {
+        -webkit-transform: scale(4);
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    button.correct-selected {
+      background-color: #0288D1;
+    }
+
+    button.correct-selected:hover {
+      background-color: #0277BD;
+    }
+
+    button:disabled {
+      background-color: #B0BEC5;
+      color: #78909C;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .result {
+      font-weight: 500;
+      margin: 16px 0;
+      min-height: 24px;
+      font-size: 16px;
+    }
+
+    .correct {
+      color: #388e3c;
+    }
+
+    .wrong {
+      color: #D62828;
+    }
+
+    .next-button-container,
+    .try-again-button-container {
+      margin-top: 16px;
+      display: none;
+    }
+
+    .next-button-container.show,
+    .try-again-button-container.show {
+      display: block;
+    }
+
+    select {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #E0E0E0;
+      width: 150px;
+      margin: 8px 0;
+    }
+
+    .explanation {
+      display: none;
+      margin-top: 16px;
+      padding: 12px;
+      background-color: #F5F5F5;
+      border-radius: 4px;
+      text-align: left;
+      font-size: 14px;
+      border-left: 4px solid #E38B18;
+    }
+
+    .explanation.show {
+      display: block;
+    }
+
+    .show-explanation {
+      background-color: #E0E0E0;
+      color: #333333;
+      margin-top: 16px;
+      box-shadow: none;
+    }
+
+    .show-explanation.active {
+      background-color: #D62828;
+      color: white;
+    }
+
+    #customAlert, #completionAlert, #resetConfirmAlert {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      background: #FFFFFF;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      z-index: 1000;
+      max-width: 90%;
+      font-size: 16px;
+      text-align: left;
+    }
+
+    #customAlert p, #completionAlert p, #resetConfirmAlert p {
+      margin: 0 0 24px 0;
+      font-size: 16px;
+    }
+
+    #levelSelection {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      background: #FFFFFF;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      z-index: 1000;
+      max-width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    #levelButtons {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    #levelButtons button {
+      width: 48px;
+      height: 48px;
+      font-size: 16px;
+      border-radius: 50%;
+      padding: 0;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    #levelButtons button.locked {
+      background-color: #B0BEC5;
+      color: #78909C;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    #levelButtons button.locked::after {
+      content: "🔒";
+      position: absolute;
+      font-size: 20px;
+    }
+
+    .dialog-buttons {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: end;
+      -ms-flex-pack: end;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .dialog-buttons button {
+      padding: 8px 16px;
+      font-size: 14px;
+      box-shadow: none;
+      min-height: 36px;
+      height: auto;
+    }
+
+    .cancel-button {
+      background-color: #E0E0E0;
+      color: #333333;
+    }
+
+    .cancel-button:hover {
+      background-color: #D0D0D0;
+    }
+
+    .ok-button {
+      background-color: #E38B18;
+    }
+
+    .ok-button:hover {
+      background-color: #D17A15;
+    }
+
+    .matching-container {
+      display: -ms-grid;
+      display: grid;
+      -ms-grid-columns: 1fr 12px 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .matching-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .matching-item {
+      padding: 12px;
+      border: 1px solid #E0E0E0;
+      border-radius: 4px;
+      background-color: #FFFFFF;
+      cursor: pointer;
+      font-size: 16px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      -webkit-transition: background-color 0.2s;
+      transition: background-color 0.2s;
+    }
+
+    .matching-item:hover {
+      background-color: #F5F5F5;
+    }
+
+    .matching-item.selected {
+      background-color: #E38B18;
+      color: white;
+      border-color: #E38B18;
+    }
+
+    .matching-item.matched {
+      background-color: #388e3c;
+      color: white;
+      border-color: #388e3c;
+    }
+
+    .arrange-container, .arranged-words {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .word-item {
+      padding: 12px;
+      border: 1px solid #E0E0E0;
+      border-radius: 4px;
+      background-color: #FFFFFF;
+      cursor: pointer;
+      font-size: 16px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      -webkit-transition: background-color 0.2s;
+      transition: background-color 0.2s;
+    }
+
+    .word-item:hover {
+      background-color: #F5F5F5;
+    }
+
+    .word-item.selected {
+      background-color: #E38B18;
+      color: white;
+      border-color: #E38B18;
+    }
+
+    .word-item.arranged {
+      background-color: #388e3c;
+      color: white;
+      border-color: #388e3c;
+    }
+
+    @-webkit-keyframes shake {
+      0% { -webkit-transform: translateX(0); transform: translateX(0); }
+      25% { -webkit-transform: translateX(-5px); transform: translateX(-5px); }
+      50% { -webkit-transform: translateX(5px); transform: translateX(5px); }
+      75% { -webkit-transform: translateX(-5px); transform: translateX(-5px); }
+      100% { -webkit-transform: translateX(0); transform: translateX(0); }
+    }
+
+    @keyframes shake {
+      0% { -webkit-transform: translateX(0); transform: translateX(0); }
+      25% { -webkit-transform: translateX(-5px); transform: translateX(-5px); }
+      50% { -webkit-transform: translateX(5px); transform: translateX(5px); }
+      75% { -webkit-transform: translateX(-5px); transform: translateX(-5px); }
+      100% { -webkit-transform: translateX(0); transform: translateX(0); }
+    }
+
+    .wrong-animation {
+      -webkit-animation: shake 0.3s ease-in-out;
+      animation: shake 0.3s ease-in-out;
+    }
+
+    @media screen and (max-width: 720px) {
+      body {
+        font-size: 14px;
+      }
+
+      .game-container {
+        margin: 8px;
+        padding: 12px;
+      }
+
+      h2 {
+        font-size: 16px;
+      }
+
+      p {
+        font-size: 14px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 14px;
+        min-height: 44px;
+        height: auto;
+      }
+
+      .score-container .reset-button,
+      .score-container .select-level-button {
+        padding: 6px 12px;
+        font-size: 12px;
+        min-height: 32px;
+        height: auto;
+      }
+
+      select {
+        font-size: 14px;
+        width: 130px;
+      }
+
+      .explanation {
+        font-size: 12px;
+      }
+
+      .dialog-buttons button {
+        font-size: 12px;
+        min-height: 32px;
+        height: auto;
+      }
+
+      .matching-container {
+        gap: 8px;
+      }
+
+      .matching-column {
+        gap: 8px;
+      }
+
+      .matching-item {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      .arrange-container, .arranged-words {
+        gap: 8px;
+      }
+
+      .word-item {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+  </style>
+  <noscript>
+    <style>
+      body {
+        display: none;
+      }
+      #noscript-message {
+        display: block;
+        text-align: center;
+        padding: 20px;
+        font-family: sans-serif;
+        color: #D62828;
+      }
+    </style>
+    <div id="noscript-message">
+      <h1>জাভাস্ক্রিপ্ট প্রয়োজন</h1>
+      <p>এই কুইজটি ব্যবহার করার জন্য আপনার ব্রাউজারে জাভাস্ক্রিপ্ট সক্রিয় করতে হবে। দয়া করে জাভাস্ক্রিপ্ট সক্রিয় করুন এবং পুনরায় চেষ্টা করুন।</p>
+    </div>
+  </noscript>
+</head>
+<body>
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div id="progressBarFill" class="progress-bar-fill"></div>
+    </div>
+  </div>
+
+  <div class="score-container">
+    <span>স্কোর: <span id="score">0</span> | সর্বোচ্চ: <span id="highScore">0</span></span>
+    <span>ভুল: <span id="wrongs">0</span> | সম্পূর্ণ: <span id="completed">0</span>/<span id="totalLevels">0</span></span>
+    <button class="select-level-button" aria-label="কুইজ লেভেল নির্বাচন করুন">লেভেল নির্বাচন</button>
+    <button class="reset-button" aria-label="কুইজ রিসেট করুন">কুইজ রিসেট</button>
+  </div>
+
+  <div class="game-container" id="gameArea">
+    <!-- কুইজ কন্টেন্ট এখানে ডায়নামিকভাবে লোড হবে -->
+  </div>
+
+  <div id="customAlert">
+    <p id="alertMessage"></p>
+    <div class="dialog-buttons">
+      <button class="ok-button" aria-label="ঠিক আছে">ঠিক আছে</button>
+    </div>
+  </div>
+
+  <div id="completionAlert">
+    <p id="completionMessage"></p>
+    <div class="dialog-buttons">
+      <button class="ok-button" aria-label="ঠিক আছে">ঠিক আছে</button>
+    </div>
+  </div>
+
+  <div id="resetConfirmAlert">
+    <p id="resetConfirmMessage">আপনি কি নিশ্চিত যে কুইজ রিসেট করতে চান? এটি আপনার সমস্ত অগ্রগতি এবং স্কোর মুছে ফেলবে।</p>
+    <div class="dialog-buttons">
+      <button class="cancel-button" aria-label="বাতিল করুন">বাতিল</button>
+      <button class="ok-button" id="confirmResetButton" aria-label="নিশ্চিত করুন">নিশ্চিত করুন</button>
+    </div>
+  </div>
+
+  <div id="levelSelection">
+    <h2>কুইজ নির্বাচন করুন</h2>
+    <div id="levelButtons"></div>
+    <div class="dialog-buttons">
+      <button class="cancel-button" aria-label="বন্ধ করুন">বন্ধ করুন</button>
+    </div>
+  </div>
+
+  <script>
+    // Polyfills for older browsers
+    // Array.prototype.includes polyfill
+    if (!Array.prototype.includes) {
+      Array.prototype.includes = function(searchElement) {
+        for (var i = 0; i < this.length; i++) {
+          if (this[i] === searchElement) return true;
+        }
+        return false;
+      };
+    }
+
+    // NodeList.prototype.forEach polyfill
+    if (window.NodeList && !NodeList.prototype.forEach) {
+      NodeList.prototype.forEach = Array.prototype.forEach;
+    }
+
+    const gameData = {
+      totalLevels: 10,
+      levels: {
+        1: {
+          type: "matching",
+          question: "জোড়া মেলাও: বাংলা শব্দের সাথে সঠিক ইংরেজি শব্দ মেলাও",
+          pairs: [
+            { bangla: "বন্ধু", english: "friend" },
+            { bangla: "দোকান", english: "shop" },
+            { bangla: "খেলা", english: "play" },
+            { bangla: "পড়া", english: "study" },
+            { bangla: "চাকরি", english: "job" }
+          ],
+          explanation: "এই কুইজে দৈনন্দিন জীবনের সাধারণ বাংলা শব্দের সাথে তাদের ইংরেজি অর্থ মেলাতে হবে। উদাহরণস্বরূপ, 'বন্ধু' এর ইংরেজি হলো 'friend', 'দোকান' এর ইংরেজি হলো 'shop'।"
+        },
+        2: {
+          type: "arrangeBanglaWords",
+          englishSentence: "I go to school every day.",
+          question: "I go to school every day. অনুবাদ করুন:",
+          banglaWords: ["আমি", "প্রতিদিন", "স্কুলে", "যাই"],
+          correctBanglaOrder: ["আমি", "প্রতিদিন", "স্কুলে", "যাই"],
+          explanation: "ইংরেজি বাক্য 'I go to school every day.' এর বাংলা অনুবাদ হলো 'আমি প্রতিদিন স্কুলে যাই'। এটি Present Simple Tense এবং 'go' ক্রিয়ার সাথে ফ্রিকোয়েন্সি অ্যাডভার্ব 'every day' ব্যবহার করে।"
+        },
+        3: {
+          type: "arrangeBanglaWords",
+          englishSentence: "She watched a movie yesterday.",
+          question: "She watched a movie yesterday. অনুবাদ করুন:",
+          banglaWords: ["তিনি", "গতকাল", "একটি", "সিনেমা", "দেখেছেন"],
+          correctBanglaOrder: ["তিনি", "গতকাল", "একটি", "সিনেমা", "দেখেছেন"],
+          explanation: "ইংরেজি বাক্য 'She watched a movie yesterday.' এর বাংলা অনুবাদ হলো 'তিনি গতকাল একটি সিনেমা দেখেছেন'। এটি Past Simple Tense এবং 'watch' ক্রিয়ার অতীত রূপ 'watched' ব্যবহার করে।"
+        },
+        4: {
+          type: "arrangeBanglaWords",
+          englishSentence: "We live in a big house.",
+          question: "We live in a big house. অনুবাদ করুন:",
+          banglaWords: ["আমরা", "একটি", "বড়", "বাড়িতে", "থাকি"],
+          correctBanglaOrder: ["আমরা", "একটি", "বড়", "বাড়িতে", "থাকি"],
+          explanation: "ইংরেজি বাক্য 'We live in a big house.' এর বাংলা অনুবাদ হলো 'আমরা একটি বড় বাড়িতে থাকি'। এটি Present Simple Tense এবং প্রিপজিশন 'in' ব্যবহার করে।"
+        },
+        5: {
+          type: "translation",
+          question: "বাক্যটির সঠিক ইংরেজি অনুবাদ নির্বাচন করুন:",
+          bangla: "আমি প্রতিদিন সকালে বই পড়ি।",
+          correctAnswer: "I read a book every morning.",
+          options: [
+            "I read a book every morning.",
+            "I am reading a book every morning.",
+            "I read a book every day."
+          ],
+          explanation: "বাংলা বাক্য 'আমি প্রতিদিন সকালে বই পড়ি।' এর সঠিক ইংরেজি অনুবাদ হলো 'I read a book every morning.'। এটি Present Simple Tense এবং ফ্রিকোয়েন্সি অ্যাডভার্ব 'every morning' ব্যবহার করে।"
+        },
+        6: {
+          type: "arrangeEnglishSentence",
+          question: "আমি গতকাল বাজারে গিয়েছিলাম। অনুবাদ করো:",
+          bangla: "আমি গতকাল বাজারে গিয়েছিলাম।",
+          words: ["went", "I", "to", "the", "market", "yesterday"],
+          correctOrder: ["I", "went", "to", "the", "market", "yesterday"],
+          correctSentence: "I went to the market yesterday",
+          explanation: "বাংলা বাক্য 'আমি গতকাল বাজারে গিয়েছিলাম।' এর সঠিক ইংরেজি অনুবাদ হলো 'I went to the market yesterday.'। এটি Past Simple Tense: Subject ('I') + verb past form ('went') + preposition ('to') + object ('the market') + time ('yesterday')।"
+        },
+        7: {
+          type: "translation",
+          question: "শূন্যস্থানে সঠিক ক্রিয়া বসাও:",
+          sentence: "They _ to the park last weekend.",
+          correctAnswer: "went",
+          options: ["go", "went", "going"],
+          explanation: "Past Simple Tense-এ 'They' এর সাথে 'go' ক্রিয়ার অতীত রূপ হলো 'went'। তাই সঠিক বাক্য হলো 'They went to the park last weekend.'।"
+        },
+        8: {
+          type: "arrangeEnglishSentence",
+          question: "তিনি একটি নতুন গাড়ি কিনেছেন। অনুবাদ করো:",
+          bangla: "তিনি একটি নতুন গাড়ি কিনেছেন।",
+          words: ["bought", "She", "a", "new", "car"],
+          correctOrder: ["She", "bought", "a", "new", "car"],
+          correctSentence: "She bought a new car",
+          explanation: "বাংলা বাক্য 'তিনি একটি নতুন গাড়ি কিনেছেন।' এর সঠিক ইংরেজি অনুবাদ হলো 'She bought a new car.'। এটি Past Simple Tense: Subject ('She') + verb past form ('bought') + article ('a') + adjective ('new') + object ('car')।"
+        },
+        9: {
+          type: "translation",
+          question: "সঠিক প্রিপজিশন নির্বাচন করুন:",
+          sentence: "I usually go to school _ bus.",
+          correctAnswer: "by",
+          options: ["in", "by", "on"],
+          explanation: "পরিবহনের ক্ষেত্রে 'by' প্রিপজিশন ব্যবহৃত হয়। তাই সঠিক বাক্য হলো 'I usually go to school by bus.'।"
+        },
+        10: {
+          type: "arrangeEnglishSentence",
+          question: "আমরা বাগানে খেলি। অনুবাদ করো:",
+          bangla: "আমরা বাগানে খেলি।",
+          words: ["play", "We", "in", "the", "garden"],
+          correctOrder: ["We", "play", "in", "the", "garden"],
+          correctSentence: "We play in the garden",
+          explanation: "বাংলা বাক্য 'আমরা বাগানে খেলি।' এর সঠিক ইংরেজি অনুবাদ হলো 'We play in the garden.'। এটি Present Simple Tense: Subject ('We') + verb ('play') + preposition ('in') + article ('the') + object ('garden')।"
+        }
+      }
+    };
+
+    let gameState = {
+      currentLevel: 1,
+      score: 0,
+      highScore: 0,
+      wrongs: 0,
+      completedLevels: [],
+      arrangedWords: [],
+      isArrangementCorrect: false,
+      isAnswerCorrect: false,
+      selectedAnswer: null,
+      isQuizEnded: false
+    };
+
+    let matchingState = {
+      selectedBangla: null,
+      selectedEnglish: null,
+      matchedPairs: []
+    };
+
+    // Store the initial order of words for Quiz 1
+    let quiz1WordOrder = {
+      bangla: null,
+      english: null
+    };
+
+    // Fallback for localStorage
+    let storageFallback = {};
+    function safeGetItem(key, defaultValue) {
+      try {
+        const value = localStorage.getItem(key);
+        if (value === null || value === "undefined") return defaultValue;
+        const parsed = JSON.parse(value);
+        return parsed !== undefined ? parsed : defaultValue;
+      } catch (e) {
+        console.warn(`localStorage getItem error for key "${key}":`, e);
+        return storageFallback[key] !== undefined ? storageFallback[key] : defaultValue;
+      }
+    }
+
+    function safeSetItem(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {
+        console.warn(`Cannot save "${key}" to localStorage:`, e);
+        storageFallback[key] = value;
+      }
+    }
+
+    // Initialize game state from storage
+    function initializeGameState() {
+      gameState.currentLevel = parseInt(safeGetItem("currentLevel", 1)) || 1;
+      gameState.score = parseInt(safeGetItem("score", 0)) || 0;
+      gameState.highScore = parseInt(safeGetItem("highScore", 0)) || 0;
+      gameState.wrongs = parseInt(safeGetItem("wrongs", 0)) || 0;
+      gameState.completedLevels = safeGetItem("completedLevels", []) || [];
+    }
+
+    // Cache DOM elements
+    const elements = {
+      gameArea: document.getElementById("gameArea"),
+      scoreDisplay: document.getElementById("score"),
+      highScoreDisplay: document.getElementById("highScore"),
+      wrongsDisplay: document.getElementById("wrongs"),
+      progressBarFill: document.getElementById("progressBarFill"),
+      completedDisplay: document.getElementById("completed"),
+      totalLevelsDisplay: document.getElementById("totalLevels"),
+      alertMessage: document.getElementById("alertMessage"),
+      customAlert: document.getElementById("customAlert"),
+      completionMessage: document.getElementById("completionMessage"),
+      completionAlert: document.getElementById("completionAlert"),
+      resetConfirmAlert: document.getElementById("resetConfirmAlert"),
+      resetConfirmMessage: document.getElementById("resetConfirmMessage"),
+      confirmResetButton: document.getElementById("confirmResetButton"),
+      cancelResetButton: document.querySelector("#resetConfirmAlert .cancel-button"),
+      levelSelection: document.getElementById("levelSelection"),
+      levelButtons: document.getElementById("levelButtons"),
+      selectLevelButton: document.querySelector(".select-level-button"),
+      resetButton: document.querySelector(".reset-button"),
+      closeAlertButton: document.querySelector("#customAlert .ok-button"),
+      closeCompletionButton: document.querySelector("#completionAlert .ok-button"),
+      closeLevelSelectionButton: document.querySelector("#levelSelection .cancel-button")
+    };
+
+    // Validate DOM elements
+    function validateElements() {
+      for (const [key, value] of Object.entries(elements)) {
+        if (!value) {
+          console.error(`DOM element "${key}" is undefined or not found`);
+        }
+      }
+    }
+
+    function showAlert(message, isSuccess = false) {
+      if (!elements.alertMessage || !elements.customAlert || !elements.completionMessage || !elements.completionAlert) {
+        console.error("Alert elements are undefined");
+        return;
+      }
+      if (isSuccess) {
+        elements.completionMessage.textContent = message;
+        elements.completionAlert.style.display = "block";
+      } else {
+        elements.alertMessage.textContent = message;
+        elements.alertMessage.className = "";
+        elements.customAlert.style.display = "block";
+      }
+    }
+
+    function closeAlert() {
+      if (elements.customAlert) {
+        elements.customAlert.style.display = "none";
+      }
+    }
+
+    function closeCompletionAlert() {
+      if (elements.completionAlert) {
+        elements.completionAlert.style.display = "none";
+      }
+    }
+
+    function showResetConfirmAlert() {
+      if (!elements.resetConfirmAlert || !elements.resetConfirmMessage) {
+        console.error("Reset confirm alert elements are undefined");
+        return;
+      }
+      elements.resetConfirmMessage.textContent = "আপনি কি নিশ্চিত যে কুইজ রিসেট করতে চান? এটি আপনার সমস্ত অগ্রগতি এবং স্কোর মুছে ফেলবে।";
+      elements.resetConfirmAlert.style.display = "block";
+    }
+
+    function closeResetConfirmAlert() {
+      if (elements.resetConfirmAlert) {
+        elements.resetConfirmAlert.style.display = "none";
+        if (elements.resetButton) {
+          elements.resetButton.focus();
+        }
+      }
+    }
+
+    function resetQuiz() {
+      gameState = {
+        currentLevel: 1,
+        score: 0,
+        highScore: 0,
+        wrongs: 0,
+        completedLevels: [],
+        arrangedWords: [],
+        isArrangementCorrect: false,
+        isAnswerCorrect: false,
+        selectedAnswer: null,
+        isQuizEnded: false
+      };
+      
+      safeSetItem("currentLevel", 1);
+      safeSetItem("score", 0);
+      safeSetItem("highScore", 0);
+      safeSetItem("wrongs", 0);
+      safeSetItem("completedLevels", []);
+      
+      if (elements.scoreDisplay) elements.scoreDisplay.textContent = "0";
+      if (elements.highScoreDisplay) elements.highScoreDisplay.textContent = "0";
+      if (elements.wrongsDisplay) elements.wrongsDisplay.textContent = "0";
+      if (elements.completedDisplay) elements.completedDisplay.textContent = "0";
+      if (elements.progressBarFill) elements.progressBarFill.style.width = "0%";
+      
+      loadLevel(1);
+    }
+
+    function updateScore(points = 1) {
+      gameState.score += points;
+      if (gameState.score > gameState.highScore) {
+        gameState.highScore = gameState.score;
+        safeSetItem("highScore", gameState.highScore);
+        if (elements.highScoreDisplay) {
+          elements.highScoreDisplay.textContent = gameState.highScore.toString();
+        }
+      }
+      safeSetItem("score", gameState.score);
+      if (elements.scoreDisplay) {
+        elements.scoreDisplay.textContent = gameState.score.toString();
+      }
+    }
+
+    function incrementWrong() {
+      gameState.wrongs++;
+      safeSetItem("wrongs", gameState.wrongs);
+      if (elements.wrongsDisplay) {
+        elements.wrongsDisplay.textContent = gameState.wrongs.toString();
+      }
+    }
+
+    function markLevelCompleted(level) {
+      if (!gameState.completedLevels.includes(level)) {
+        gameState.completedLevels.push(level);
+        safeSetItem("completedLevels", gameState.completedLevels);
+        if (elements.completedDisplay) {
+          elements.completedDisplay.textContent = gameState.completedLevels.length.toString();
+        }
+      }
+    }
+
+    function updateProgressBar() {
+      if (!elements.progressBarFill) return;
+      const progress = (gameState.currentLevel / gameData.totalLevels) * 100;
+      elements.progressBarFill.style.width = progress + "%";
+    }
+
+    function toggleExplanation() {
+      const explanation = document.getElementById("explanation");
+      const button = document.querySelector(".show-explanation");
+      if (explanation && button) {
+        explanation.classList.toggle("show");
+        button.classList.toggle("active");
+      } else {
+        console.error("Explanation or button element is undefined");
+      }
+    }
+
+    function showNextButton() {
+      const nextButtonContainer = document.getElementById("nextButtonContainer");
+      if (nextButtonContainer) {
+        nextButtonContainer.classList.add("show");
+      }
+    }
+
+    function showTryAgainButton() {
+      const tryAgainButtonContainer = document.getElementById("tryAgainButtonContainer");
+      if (tryAgainButtonContainer) {
+        tryAgainButtonContainer.classList.add("show");
+      }
+    }
+
+    function hideSubmitButton() {
+      const submitButton = document.querySelector('button[data-action="checkBanglaArrangement"], button[data-action="checkEnglishArrangement"]');
+      if (submitButton) {
+        submitButton.style.display = "none";
+      }
+    }
+
+    function loadLevel(level) {
+      if (!elements.gameArea) {
+        console.error("Game area element is undefined");
+        return;
+      }
+
+      if (level > gameData.totalLevels) {
+        showAlert("অভিনন্দন! আপনি সব কুইজ সম্পন্ন করেছেন!", true);
+        return;
+      }
+
+      if (!gameData.levels[level]) {
+        showAlert("কুইজ লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
+        console.error("Level " + level + " data is undefined");
+        return;
+      }
+
+      gameState.currentLevel = level;
+      gameState.arrangedWords = [];
+      gameState.isArrangementCorrect = false;
+      gameState.isAnswerCorrect = false;
+      gameState.selectedAnswer = null;
+      gameState.isQuizEnded = false;
+      safeSetItem("currentLevel", level);
+      updateProgressBar();
+
+      matchingState = {
+        selectedBangla: null,
+        selectedEnglish: null,
+        matchedPairs: []
+      };
+
+      const levelData = gameData.levels[level];
+      let levelHtml = "<h2>কুইজ " + level + "</h2>";
+      
+      switch (levelData.type) {
+        case "translation":
+          levelHtml += renderTranslation(levelData);
+          break;
+        case "matching":
+          levelHtml += renderMatching(levelData);
+          break;
+        case "arrangeBanglaWords":
+          levelHtml += renderArrangeBanglaWords(levelData);
+          break;
+        case "arrangeEnglishSentence":
+          levelHtml += renderArrangeEnglishSentence(levelData);
+          break;
+        default:
+          levelHtml += "<p>কুইজ লোড করতে সমস্যা হয়েছে।</p>";
+          console.error("Unknown level type: " + levelData.type);
+      }
+
+      levelHtml += `
+        <div id="levelResult" class="result" aria-live="polite"></div>
+        <div id="nextButtonContainer" class="next-button-container">
+          <button data-action="nextLevel" aria-label="পরবর্তী কুইজে যান">পরবর্তী</button>
+        </div>
+        <div id="tryAgainButtonContainer" class="try-again-button-container">
+          <button data-action="tryAgain" aria-label="আবার চেষ্টা করুন">আবার চেষ্টা করুন</button>
+        </div>
+        <button class="show-explanation" aria-label="ব্যাখ্যা দেখুন বা লুকান">ব্যাখ্যা দেখুন</button>
+        <div id="explanation" class="explanation">
+          <strong>ব্যাখ্যা:</strong> ${levelData.explanation}
+        </div>
+      `;
+
+      elements.gameArea.innerHTML = levelHtml;
+      elements.gameArea.style.opacity = "0";
+      requestAnimationFrame(() => {
+        elements.gameArea.style.transition = "opacity 0.3s";
+        elements.gameArea.style.opacity = "1";
+      });
+
+      // Attach event listeners to dynamically created elements
+      attachDynamicEventListeners();
+    }
+
+    function renderTranslation(data) {
+      let html = '<div class="translation-question">' + data.question + '</div>';
+      if (data.english) {
+        html += "<p>ইংরেজি: " + data.english + "</p><div>";
+      } else if (data.bangla) {
+        html += "<p>বাংলা: " + data.bangla + "</p><div>";
+      } else if (data.sentence) {
+        html += "<div>" + data.sentence + "</div>";
+      }
+      
+      if (data.options && Array.isArray(data.options)) {
+        data.options.forEach(function(option) {
+          html += '<button data-answer="' + option.replace(/'/g, "'") + '" data-action="checkTranslation" aria-label="নির্বাচন করুন: ' + option + '">' + option + '</button>';
+        });
+      } else {
+        console.error("Options are undefined or not an array for translation level");
+        html += "<p>অপশন লোড করতে সমস্যা হয়েছে।</p>";
+      }
+      
+      return html + "</div>";
+    }
+
+    function renderMatching(data) {
+      if (!data.pairs || !Array.isArray(data.pairs)) {
+        console.error("Pairs are undefined or not an array for matching level");
+        return "<p>জোড়া লোড করতে সমস্যা হয়েছে।</p>";
+      }
+
+      // Use stored order if available, otherwise shuffle and store
+      let orderedBangla, orderedEnglish;
+      if (gameState.currentLevel === 1) {
+        if (!quiz1WordOrder.bangla || !quiz1WordOrder.english) {
+          orderedBangla = data.pairs.slice().sort(function() { return Math.random() - 0.5; });
+          orderedEnglish = data.pairs.slice().sort(function() { return Math.random() - 0.5; });
+          quiz1WordOrder.bangla = orderedBangla;
+          quiz1WordOrder.english = orderedEnglish;
+        } else {
+          orderedBangla = quiz1WordOrder.bangla;
+          orderedEnglish = quiz1WordOrder.english;
+        }
+      } else {
+        orderedBangla = data.pairs.slice().sort(function() { return Math.random() - 0.5; });
+        orderedEnglish = data.pairs.slice().sort(function() { return Math.random() - 0.5; });
+      }
+
+      let html = "<p>" + data.question + "</p>";
+      html += '<div class="matching-container">';
+      
+      // Bangla column
+      html += '<div class="matching-column">';
+      orderedBangla.forEach(function(pair) {
+        var isMatched = matchingState.matchedPairs.some(function(matched) { return matched.bangla === pair.bangla; });
+        html += '<div class="matching-item bangla-item ' + (isMatched ? "matched" : "") + '" data-bangla="' + pair.bangla + '" data-action="selectMatchingItem" data-type="bangla" aria-label="বাংলা শব্দ: ' + pair.bangla + '">' + pair.bangla + '</div>';
+      });
+      html += '</div>';
+
+      // English column
+      html += '<div class="matching-column">';
+      orderedEnglish.forEach(function(pair) {
+        var isMatched = matchingState.matchedPairs.some(function(matched) { return matched.english === pair.english; });
+        html += '<div class="matching-item english-item ' + (isMatched ? "matched" : "") + '" data-english="' + pair.english + '" data-action="selectMatchingItem" data-type="english" aria-label="ইংরেজি শব্দ: ' + pair.english + '">' + pair.english + '</div>';
+      });
+      html += '</div>';
+
+      html += "</div>";
+      
+      return html;
+    }
+
+    function renderArrangeBanglaWords(data) {
+      if (!data.banglaWords || !Array.isArray(data.banglaWords)) {
+        console.error("Bangla words are undefined or not an array for arrangeBanglaWords level");
+        return "<p>শব্দ লোড করতে সমস্যা হয়েছে।</p>";
+      }
+
+      const shuffledBanglaWords = data.banglaWords.slice().sort(function() { return Math.random() - 0.5; });
+
+      var questionText = data.question || (data.englishSentence + " অনুবাদ করুন:");
+      var html = "<p>" + questionText + "</p>";
+      html += "<p>বাংলা সঠিক ক্রমে সাজান:</p>";
+      html += '<div class="arrange-container" id="arrangeContainer">';
+      
+      shuffledBanglaWords.forEach(function(word) {
+        html += '<div class="word-item" data-word="' + word + '" data-action="arrangeWord" aria-label="শব্দ: ' + word + '">' + word + '</div>';
+      });
+
+      html += "</div>";
+      html += '<div class="arranged-words" id="arrangedWords"></div>';
+      html += '<button data-action="checkBanglaArrangement" aria-label="বাংলা শব্দের বিন্যাস জমা দিন">জমা দিন</button>';
+      
+      return html;
+    }
+
+    function renderArrangeEnglishSentence(data) {
+      if (!data.words || !Array.isArray(data.words)) {
+        console.error("Words are undefined or not an array for arrangeEnglishSentence level");
+        return "<p>শব্দ লোড করতে সমস্যা হয়েছে।</p>";
+      }
+
+      var html = "<p>" + data.question + "</p>";
+      html += "<p>ইংরেজি সঠিক ক্রমে সাজান:</p>";
+      html += '<div class="arrange-container" id="arrangeContainer">';
+      
+      data.words.forEach(function(word) {
+        html += '<div class="word-item" data-word="' + word + '" data-action="arrangeWord" aria-label="শব্দ: ' + word + '">' + word + '</div>';
+      });
+
+      html += "</div>";
+      html += '<div class="arranged-words" id="arrangedWords"></div>';
+      html += '<button data-action="checkEnglishArrangement" aria-label="ইংরেজি বাক্য জমা দিন">জমা দিন</button>';
+      
+      return html;
+    }
+
+    function arrangeWord(element) {
+      if (gameState.isArrangementCorrect || gameState.isQuizEnded) return;
+
+      var word = element.dataset.word;
+      var arrangeContainer = document.getElementById("arrangeContainer");
+      var arrangedWordsContainer = document.getElementById("arrangedWords");
+
+      if (!arrangeContainer || !arrangedWordsContainer) {
+        console.error("Arrange container or arranged words container is undefined");
+        return;
+      }
+
+      if (element.parentElement === arrangeContainer) {
+        // Move word to arrangedWords
+        gameState.arrangedWords.push(word);
+        element.classList.add("selected");
+        arrangedWordsContainer.innerHTML += '<div class="word-item arranged" data-word="' + word + '" data-action="arrangeWord" aria-label="নির্বাচিত শব্দ: ' + word + '">' + word + '</div>';
+        arrangeContainer.removeChild(element);
+      } else if (element.parentElement === arrangedWordsContainer) {
+        // Undo: Move word back to arrangeContainer
+        var index = gameState.arrangedWords.indexOf(word);
+        if (index !== -1) {
+          gameState.arrangedWords.splice(index, 1);
+          // Create a new element with the original styling
+          arrangeContainer.innerHTML += '<div class="word-item" data-word="' + word + '" data-action="arrangeWord" aria-label="শব্দ: ' + word + '">' + word + '</div>';
+          arrangedWordsContainer.removeChild(element);
+        }
+      }
+
+      // Re-attach event listeners to the newly added elements
+      attachDynamicEventListeners();
+    }
+
+    function checkTranslation(answer, buttonElement) {
+      if (gameState.isAnswerCorrect || gameState.isQuizEnded) return;
+      var levelData = gameData.levels[gameState.currentLevel];
+      var resultElement = document.getElementById("levelResult");
+
+      if (!levelData || !resultElement) {
+        console.error("Level data or result element is undefined");
+        showAlert("কুইজ ডেটা লোড করতে সমস্যা হয়েছে।");
+        return;
+      }
+
+      if (answer === levelData.correctAnswer.toString()) {
+        resultElement.textContent = "অভিনন্দন!";
+        resultElement.className = "result correct";
+        gameState.isAnswerCorrect = true;
+        updateScore();
+        markLevelCompleted(gameState.currentLevel);
+        if (buttonElement) {
+          buttonElement.classList.add("correct-selected");
+          buttonElement.disabled = true;
+        }
+        // Automatically load the next level after a 1-second delay
+        setTimeout(function() {
+          loadLevel(gameState.currentLevel + 1);
+        }, 1000);
+      } else {
+        resultElement.textContent = "ভুল উত্তর!";
+        resultElement.className = "result wrong";
+        incrementWrong();
+        showTryAgainButton();
+      }
+    }
+
+    function checkBanglaArrangement() {
+      if (gameState.isArrangementCorrect || gameState.isQuizEnded) return;
+
+      var levelData = gameData.levels[gameState.currentLevel];
+      var resultElement = document.getElementById("levelResult");
+
+      if (!levelData || !resultElement) {
+        console.error("Level data or result element is undefined");
+        showAlert("কুইজ ডেটা লোড করতে সমস্যা হয়েছে।");
+        return;
+      }
+
+      if (gameState.arrangedWords.length === 0) {
+        showAlert("দয়া করে কিছু শব্দ নির্বাচন করুন!");
+        return;
+      }
+
+      if (gameState.arrangedWords.length !== levelData.correctBanglaOrder.length) {
+        resultElement.textContent = "ভুল উত্তর!";
+        resultElement.className = "result wrong";
+        incrementWrong();
+        showTryAgainButton();
+        return;
+      }
+
+      var isCorrect = gameState.arrangedWords.every(function(word, index) {
+        return word === levelData.correctBanglaOrder[index];
+      });
+
+      if (isCorrect) {
+        resultElement.textContent = "অভিনন্দন!";
+        resultElement.className = "result correct";
+        gameState.isAnswerCorrect = true;
+        hideSubmitButton();
+        updateScore();
+        markLevelCompleted(gameState.currentLevel);
+        // Automatically load the next level after a 1-second delay
+        setTimeout(function() {
+          loadLevel(gameState.currentLevel + 1);
+        }, 1000);
+      } else {
+        resultElement.textContent = "ভুল উত্তর!";
+        resultElement.className = "result wrong";
+        incrementWrong();
+        showTryAgainButton();
+      }
+    }
+
+    function checkEnglishArrangement() {
+      if (gameState.isQuizEnded) return;
+
+      var levelData = gameData.levels[gameState.currentLevel];
+      var resultElement = document.getElementById("levelResult");
+
+      if (!levelData || !resultElement) {
+        console.error("Level data or result element is undefined");
+        showAlert("কুইজ ডেটা লোড করতে সমস্যা হয়েছে।");
+        return;
+      }
+
+      if (gameState.arrangedWords.length === 0) {
+        showAlert("দয়া করে কিছু শব্দ নির্বাচন করুন!");
+        return;
+      }
+
+      if (gameState.arrangedWords.length !== levelData.correctOrder.length) {
+        resultElement.textContent = "ভুল উত্তর!";
+        resultElement.className = "result wrong";
+        incrementWrong();
+        showTryAgainButton();
+        return;
+      }
+
+      var isCorrect = gameState.arrangedWords.every(function(word, index) {
+        return word === levelData.correctOrder[index];
+      });
+
+      if (isCorrect) {
+        resultElement.textContent = "অভিনন্দন!";
+        resultElement.className = "result correct";
+        gameState.isAnswerCorrect = true;
+        hideSubmitButton();
+        updateScore();
+        markLevelCompleted(gameState.currentLevel);
+        // Automatically load the next level after a 1-second delay
+        setTimeout(function() {
+          loadLevel(gameState.currentLevel + 1);
+        }, 1000);
+      } else {
+        resultElement.textContent = "ভুল উত্তর!";
+        resultElement.className = "result wrong";
+        incrementWrong();
+        showTryAgainButton();
+      }
+    }
+
+    function selectMatchingItem(element, type) {
+      var resultElement = document.getElementById("levelResult");
+      var levelData = gameData.levels[gameState.currentLevel];
+
+      if (!levelData || !resultElement) {
+        console.error("Level data or result element is undefined");
+        showAlert("কুইজ ডেটা লোড করতে সমস্যা হয়েছে।");
+        return;
+      }
+
+      if (element.classList.contains("matched") || gameState.isQuizEnded) {
+        return;
+      }
+
+      resultElement.textContent = "";
+      resultElement.className = "result";
+
+      var selectedItems = document.querySelectorAll("." + type + "-item.selected");
+      for (var i = 0; i < selectedItems.length; i++) {
+        selectedItems[i].classList.remove("selected", "wrong-animation");
+      }
+
+      element.classList.add("selected");
+
+      if (type === "bangla") {
+        matchingState.selectedBangla = element.dataset.bangla.trim();
+      } else {
+        matchingState.selectedEnglish = element.dataset.english.trim();
+      }
+
+      console.log("Selected Bangla:", matchingState.selectedBangla); // Debugging
+      console.log("Selected English:", matchingState.selectedEnglish); // Debugging
+
+      if (matchingState.selectedBangla && matchingState.selectedEnglish) {
+        var pair = levelData.pairs.find(function(p) {
+          console.log("Comparing:", p.bangla.trim(), "with", matchingState.selectedBangla, "and", p.english.trim(), "with", matchingState.selectedEnglish); // Debugging
+          return p.bangla.trim() === matchingState.selectedBangla.trim() && p.english.trim() === matchingState.selectedEnglish.trim();
+        });
+
+        if (pair) {
+          console.log("Match found:", pair); // Debugging
+          matchingState.matchedPairs.push(pair);
+          
+          var banglaItems = document.querySelectorAll('.bangla-item[data-bangla="' + matchingState.selectedBangla + '"]');
+          for (var i = 0; i < banglaItems.length; i++) {
+            banglaItems[i].classList.add("matched");
+            banglaItems[i].classList.remove("selected");
+          }
+          var englishItems = document.querySelectorAll('.english-item[data-english="' + matchingState.selectedEnglish + '"]');
+          for (var i = 0; i < englishItems.length; i++) {
+            englishItems[i].classList.add("matched");
+            englishItems[i].classList.remove("selected");
+          }
+
+          if (matchingState.matchedPairs.length === levelData.pairs.length) {
+            resultElement.textContent = "অভিনন্দন!";
+            resultElement.className = "result correct";
+            gameState.isAnswerCorrect = true;
+            updateScore();
+            markLevelCompleted(gameState.currentLevel);
+            gameState.isQuizEnded = true;
+            // Automatically load the next level after a 1-second delay
+            setTimeout(function() {
+              loadLevel(gameState.currentLevel + 1);
+            }, 1000);
+          }
+
+          matchingState.selectedBangla = null;
+          matchingState.selectedEnglish = null;
+        } else {
+          console.log("No match found for:", matchingState.selectedBangla, matchingState.selectedEnglish); // Debugging
+          resultElement.textContent = "ভুল জোড়া!";
+          resultElement.className = "result wrong";
+          if (gameState.currentLevel !== 1) {
+            incrementWrong();
+          }
+          var selectedBanglaItems = document.querySelectorAll(".bangla-item.selected");
+          var selectedEnglishItems = document.querySelectorAll(".english-item.selected");
+          var allSelected = [];
+          for (var i = 0; i < selectedBanglaItems.length; i++) {
+            allSelected.push(selectedBanglaItems[i]);
+          }
+          for (var i = 0; i < selectedEnglishItems.length; i++) {
+            allSelected.push(selectedEnglishItems[i]);
+          }
+          for (var i = 0; i < allSelected.length; i++) {
+            allSelected[i].classList.add("wrong-animation");
+            (function(item) {
+              setTimeout(function() {
+                item.classList.remove("selected", "wrong-animation");
+              }, 300);
+            })(allSelected[i]);
+          }
+          matchingState.selectedBangla = null;
+          matchingState.selectedEnglish = null;
+        }
+      }
+    }
+
+    function isLevelUnlocked(level) {
+      if (level === 1) return true;
+      return gameState.completedLevels.includes(level - 1);
+    }
+
+    function showLevelSelection() {
+      if (!elements.levelButtons) {
+        console.error("Level buttons element is undefined");
+        return;
+      }
+
+      elements.levelButtons.innerHTML = "";
+      
+      for (var i = 1; i <= gameData.totalLevels; i++) {
+        var button = document.createElement("button");
+        button.textContent = i.toString();
+        button.className = "";
+        button.setAttribute("aria-label", "কুইজ লেভেল " + i + " নির্বাচন করুন");
+        
+        var isUnlocked = isLevelUnlocked(i);
+        var isCompleted = gameState.completedLevels.includes(i);
+
+        if (isCompleted) {
+          button.style.backgroundColor = "#388e3c";
+        }
+
+        if (!isUnlocked) {
+          button.classList.add("locked");
+          button.disabled = true;
+        } else {
+          (function(level) {
+            button.addEventListener("click", function() {
+              loadLevel(level);
+              closeLevelSelection();
+            });
+          })(i);
+        }
+        
+        elements.levelButtons.appendChild(button);
+      }
+      
+      if (elements.levelSelection) {
+        elements.levelSelection.style.display = "block";
+        var firstUnlockedButton = elements.levelButtons.querySelector("button:not(.locked)");
+        if (firstUnlockedButton) {
+          firstUnlockedButton.focus();
+        }
+      }
+    }
+
+    function closeLevelSelection() {
+      if (elements.levelSelection) {
+        elements.levelSelection.style.display = "none";
+        if (elements.selectLevelButton) {
+          elements.selectLevelButton.focus();
+        }
+      }
+    }
+
+    function attachDynamicEventListeners() {
+      // Translation buttons
+      var translationButtons = document.querySelectorAll('[data-action="checkTranslation"]');
+      for (var i = 0; i < translationButtons.length; i++) {
+        translationButtons[i].addEventListener("click", function(e) {
+          var answer = e.target.dataset.answer;
+          checkTranslation(answer, e.target);
+        });
+      }
+
+      // Matching items
+      var matchingItems = document.querySelectorAll('[data-action="selectMatchingItem"]');
+      for (var i = 0; i < matchingItems.length; i++) {
+        matchingItems[i].addEventListener("click", function(e) {
+          var type = e.target.dataset.type;
+          selectMatchingItem(e.target, type);
+        });
+      }
+
+      // Arrange words
+      var wordItems = document.querySelectorAll('[data-action="arrangeWord"]');
+      for (var i = 0; i < wordItems.length; i++) {
+        wordItems[i].addEventListener("click", function(e) {
+          arrangeWord(e.target);
+        });
+      }
+
+      // Check arrangement buttons
+      var checkBanglaButton = document.querySelector('[data-action="checkBanglaArrangement"]');
+      if (checkBanglaButton) {
+        checkBanglaButton.addEventListener("click", checkBanglaArrangement);
+      }
+
+      var checkEnglishButton = document.querySelector('[data-action="checkEnglishArrangement"]');
+      if (checkEnglishButton) {
+        checkEnglishButton.addEventListener("click", checkEnglishArrangement);
+      }
+
+      // Next level button
+      var nextButton = document.querySelector('[data-action="nextLevel"]');
+      if (nextButton) {
+        nextButton.addEventListener("click", function() {
+          loadLevel(gameState.currentLevel + 1);
+        });
+      }
+
+      // Try again button
+      var tryAgainButton = document.querySelector('[data-action="tryAgain"]');
+      if (tryAgainButton) {
+        tryAgainButton.addEventListener("click", function() {
+          loadLevel(gameState.currentLevel);
+        });
+      }
+
+      // Show explanation button
+      var showExplanationButton = document.querySelector(".show-explanation");
+      if (showExplanationButton) {
+        showExplanationButton.addEventListener("click", toggleExplanation);
+      }
+    }
+
+    function init() {
+      validateElements();
+      initializeGameState();
+
+      if (elements.totalLevelsDisplay) {
+        elements.totalLevelsDisplay.textContent = gameData.totalLevels.toString();
+      }
+      if (elements.completedDisplay) {
+        elements.completedDisplay.textContent = gameState.completedLevels.length.toString();
+      }
+      if (elements.highScoreDisplay) {
+        elements.highScoreDisplay.textContent = gameState.highScore.toString();
+      }
+      if (elements.wrongsDisplay) {
+        elements.wrongsDisplay.textContent = gameState.wrongs.toString();
+      }
+
+      // Attach static event listeners
+      if (elements.selectLevelButton) {
+        elements.selectLevelButton.addEventListener("click", showLevelSelection);
+      }
+      if (elements.resetButton) {
+        elements.resetButton.addEventListener("click", showResetConfirmAlert);
+      }
+      if (elements.closeAlertButton) {
+        elements.closeAlertButton.addEventListener("click", closeAlert);
+      }
+      if (elements.closeCompletionButton) {
+        elements.closeCompletionButton.addEventListener("click", closeCompletionAlert);
+      }
+      if (elements.closeLevelSelectionButton) {
+        elements.closeLevelSelectionButton.addEventListener("click", closeLevelSelection);
+      }
+      if (elements.confirmResetButton) {
+        elements.confirmResetButton.addEventListener("click", function() {
+          resetQuiz();
+          closeResetConfirmAlert();
+        });
+      }
+      if (elements.cancelResetButton) {
+        elements.cancelResetButton.addEventListener("click", closeResetConfirmAlert);
+      }
+
+      // Add ripple effect to buttons
+      var buttons = document.querySelectorAll("button");
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("click", createRipple);
+        buttons[i].addEventListener("touchstart", createRipple);
+      }
+
+      loadLevel(gameState.currentLevel);
+    }
+
+    function createRipple(event) {
+      var button = event.currentTarget;
+      var rect = button.getBoundingClientRect();
+      var size = Math.max(rect.width, rect.height);
+      var x = (event.clientX || event.touches[0].clientX) - rect.left - size / 2;
+      var y = (event.clientY || event.touches[0].clientY) - rect.top - size / 2;
+
+      var ripple = document.createElement("span");
+      ripple.className = "ripple-effect";
+      ripple.style.width = size + "px";
+      ripple.style.height = size + "px";
+      ripple.style.left = x + "px";
+      ripple.style.top = y + "px";
+
+      button.appendChild(ripple);
+
+      setTimeout(function() {
+        ripple.remove();
+      }, 600);
+    }
+
+    window.addEventListener("load", init);
+  </script>
+</body>
+</html>
